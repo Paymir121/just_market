@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+
+from django.conf.global_settings import LOGGING
 from dotenv import load_dotenv
 
 # Загружаем переменные окружения
@@ -26,6 +28,8 @@ INSTALLED_APPS = [
     'corsheaders',
     "rest_framework.authtoken",
     'django_filters',
+    "clients",
+    "services"
 ]
 
 MIDDLEWARE = [
@@ -66,11 +70,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', '456852'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': '456852',
+        'HOST': "localhost",
+        'PORT': 5439,
     }
 }
 
@@ -143,3 +147,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React по умолчанию
     "http://127.0.0.1:3000",
 ]
+
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        "console" : {
+            "class": "logging.StreamHandler"
+        }
+    },
+    "loggers": {
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG"
+        }
+    }
+}

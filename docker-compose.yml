@@ -6,10 +6,14 @@ volumes:
 services:
   db:
     image: postgres:13.10
-    env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
-
+    environment:
+      - DB_HOST=localhost
+      - DB_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASS=pass
+    restart: always
   backend:
     build: ./backend/
     env_file: .env
