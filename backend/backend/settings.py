@@ -72,22 +72,22 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '456852',
-        'HOST': "localhost",
-        'PORT': 5439,
+        'PASSWORD': 'postgres',
+        'HOST': "db",
+        'PORT': 5432,
     }
 }
-
-# Для разработки можно использовать SQLite как fallback
-if os.environ.get('DJANGO_DEVELOPMENT') and not all([
-    os.environ.get('POSTGRES_DB'),
-    os.environ.get('POSTGRES_USER'),
-    os.environ.get('POSTGRES_PASSWORD')
-]):
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+print(f"DATABASES: {DATABASES}")
+# # Для разработки можно использовать SQLite как fallback
+# if os.environ.get('DJANGO_DEVELOPMENT') and not all([
+#     os.environ.get('POSTGRES_DB'),
+#     os.environ.get('POSTGRES_USER'),
+#     os.environ.get('POSTGRES_PASSWORD')
+# ]):
+#     DATABASES['default'] = {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 
 
 # Password validation

@@ -8,7 +8,7 @@ from clients.models import Client
 # Create your models here.
 class Service(models.Model):
     name = models.CharField(max_length=111)
-    full_price = models.PositiveIntegerField
+    full_price = models.PositiveIntegerField(default=0)
 
 class Plan(models.Model):
     PLAN_TYPES = (
