@@ -22,6 +22,7 @@ services:
     env_file: .env
     depends_on:
       - db
+      - redis  # ← Добавьте redis в зависимости
     volumes:
       - static:/backend_static
       - media:/backend/media/
@@ -41,3 +42,27 @@ services:
       - backend
     networks:
       - app_network
+    restart: always
+
+  redis:
+    image: redis:7.0.5-alpine
+    hostname: redis
+    networks:  # ← Подключите redis к сети
+      - app_network
+    restart: always
+
+  worker:
+    build: ./backend/
+    env_file: .env
+    hostname: worker
+    entrypoint: celery
+    command: -A celery_app.app worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - static:/backend_static
+      - media:/backend/media/
+    networks:
+      - app_network
+    restart: always
