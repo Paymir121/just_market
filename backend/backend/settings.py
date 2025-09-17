@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'corsheaders',
     "rest_framework.authtoken",
     'django_filters',
+    'chachalot',
+
     "clients",
     "services"
 ]
