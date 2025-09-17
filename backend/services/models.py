@@ -1,14 +1,32 @@
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.core.validators import MaxValueValidator
 from django.db import models
 
 from clients.models import Client
+from django.db.models.signals import post_delete
+
+from backend.services.receivers import delete_cache_total_sum
 
 
 # Create your models here.
 class Service(models.Model):
     name = models.CharField(max_length=111)
     full_price = models.PositiveIntegerField(default=0)
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.__full_price=self.full_price
+
+    def save(self, *args,**kwargs):
+        print("Service self.subscriptions.all()")
+        if self.__full_price != self.full_price:
+
+            for subscription in self.subscriptions.all():
+                from services.tasks import set_price, set_comment
+                set_price.delay(subscription.id)
+                set_comment.delay(subscription.id)
+            return super().save(*args, **kwargs)
 
 class Plan(models.Model):
     PLAN_TYPES = (
@@ -22,8 +40,35 @@ class Plan(models.Model):
                                                        MaxValueValidator(100)
                                                    ]
                                                    )
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.__discount_percent  = self.discount_percent
+
+    def save(self, *args,**kwargs):
+        print("self.subscriptions.all()")
+        if self.__discount_percent != self.discount_percent:
+            print(self.subscriptions.all())
+            for subscription in self.subscriptions.all():
+
+                from services.tasks import set_price, set_comment
+                set_price.delay(subscription.id)
+                set_comment.delay(subscription.id)
+            return super().save(*args, **kwargs)
+
+
 class Subscription(models.Model):
     client = models.ForeignKey("clients.Client", related_name="subscriptions", on_delete=models.PROTECT)
     service = models.ForeignKey(Service, related_name="subscriptions", on_delete=models.PROTECT)
     plan = models.ForeignKey(Plan, related_name="subscriptions", on_delete=models.PROTECT)
     price = models.PositiveIntegerField(default=0)
+
+    comment = models.CharField(blank=True, null=True, default='')
+
+    def save(self, *args, **kwargs):
+        creating = not bool(self.id)
+        result = super().save(*args, **kwargs)
+        if creating:
+            cache.delete('price_cache')
+        return result
+
+post_delete.connect(delete_cache_total_sum(), sender=Subscription)

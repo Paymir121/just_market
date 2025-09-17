@@ -67,6 +67,22 @@ services:
       - app_network
     restart: always
 
+  worker2:
+    build: ./backend/
+    env_file: .env
+    hostname: worker2
+    entrypoint: celery
+    command: -A celery_app.app worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - static:/backend_static
+      - media:/backend/media/
+    networks:
+      - app_network
+    restart: always
+
   flower:
     build: ./backend/
     env_file: .env
