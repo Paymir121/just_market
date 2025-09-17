@@ -14,5 +14,6 @@ app.autodiscover_tasks()
 
 @app.task()
 def debug_task():
+    print("1 Celery Taks Debug")
     time.sleep(20)
-    print("Celery Taks Debug")
+    print("2 Celery Taks Debug")

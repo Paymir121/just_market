@@ -66,3 +66,21 @@ services:
     networks:
       - app_network
     restart: always
+
+  flower:
+    build: ./backend/
+    env_file: .env
+    hostname: flower
+    entrypoint: celery
+    command: -A celery_app.app flower
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - static:/backend_static
+      - media:/backend/media/
+    networks:
+      - app_network
+    restart: always
+    ports:
+      - "5555:5555"

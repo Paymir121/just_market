@@ -75,6 +75,9 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': "db",
         'PORT': 5432,
+        # 'PASSWORD': '456852',
+        # 'HOST': "localhost",
+        # 'PORT': 5439,
     }
 }
 print(f"DATABASES: {DATABASES}")
